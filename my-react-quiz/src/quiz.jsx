@@ -24,11 +24,13 @@ export default function Quiz() {
   }
 
   const currentQuestion = questions[currentQuestionIndex];
+  const isFirstQuestion = currentQuestionIndex === 0;
+  const isLastQuestion = currentQuestionIndex === questions.length -1;
 
   return (
     <>
       <h1>{currentQuestion.question}</h1>
-      {currentQuestion.answers.map((answer, answerIndex) => {
+      {currentQuestion.answers.map((answer, answerIndex) => { 
             const chosenAnswer = chosenAnswers[currentQuestionIndex];
             let className = 'answer'
 
@@ -36,23 +38,38 @@ export default function Quiz() {
                 className += currentQuestion.correctAnswer === chosenAnswer ? ' correct' : ' incorrect';
             }
 
-
         return (
           <h2
             key={answer} // whenever map over an array to generate jsx we need to have unique keys
             onClick={() => {
                 if(chosenAnswer != null) return;
-
                 updateChosenAnswers(currentQuestionIndex, answerIndex);
-
             }}
             className = {className}
           >
-
             {answer}
           </h2>
         );
       })}
-    </>
+    <button
+    disabled={isFirstQuestion}
+      onClick={() => {
+        setCurrentQuestionIndex(currentQuestionIndex - 1);
+      } }>
+          Back
+      </button>
+      
+      <button
+      disabled={isLastQuestion || chosenAnswers[currentQuestionIndex]  == null}
+      onClick={() => {
+        setCurrentQuestionIndex(currentQuestionIndex + 1);
+      }}
+      >
+        Next
+      </button>
+
+
+</>
+ 
   );
 }
