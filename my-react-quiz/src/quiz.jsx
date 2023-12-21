@@ -1,75 +1,35 @@
+import { quest } from "blizzard.js/dist/resources/wow";
 import React, { useState, useEffect } from "react";
 
 export default function Quiz() {
   const [questions, setQuestions] = useState(null);
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [chosenAnswers, setChosenAnswers] = useState([]);
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
 
   useEffect(() => {
-    const callFetch = async () => {
+    const getFetch = async () => {
       const response = await fetch("/api/fe/quiz");
       const jsonResponse = await response.json();
       setQuestions(jsonResponse);
     };
-    callFetch();
+    getFetch();
   }, []);
 
   if (questions == null) return null;
 
-    const updateChosenAnswers = (questionIndex, answerIndex) => {
-          const newChosenAnswers = [...chosenAnswers];
-          newChosenAnswers[questionIndex] = answerIndex;
-          setChosenAnswers(newChosenAnswers);  
-
-  }
+  const updateChosenAnswers = (questionIndex, answerIndex) => {
+    const newChosenAnswer = [...chosenAnswers];
+    newChosenAnswer[questionIndex] = answerIndex;
+    setChosenAnswers(newChosenAnswer);
+  };
 
   const currentQuestion = questions[currentQuestionIndex];
   const isFirstQuestion = currentQuestionIndex === 0;
-  const isLastQuestion = currentQuestionIndex === questions.length -1;
+  const isLastQuestion = currentQuestionIndex === questions.length - 1;
 
   return (
     <>
       <h1>{currentQuestion.question}</h1>
-      {currentQuestion.answers.map((answer, answerIndex) => { 
-            const chosenAnswer = chosenAnswers[currentQuestionIndex];
-            let className = 'answer'
-
-            if(chosenAnswer === answerIndex){
-                className += currentQuestion.correctAnswer === chosenAnswer ? ' correct' : ' incorrect';
-            }
-
-        return (
-          <h2
-            key={answer} // whenever map over an array to generate jsx we need to have unique keys
-            onClick={() => {
-                if(chosenAnswer != null) return;
-                updateChosenAnswers(currentQuestionIndex, answerIndex);
-            }}
-            className = {className}
-          >
-            {answer}
-          </h2>
-        );
-      })}
-    <button
-    disabled={isFirstQuestion}
-      onClick={() => {
-        setCurrentQuestionIndex(currentQuestionIndex - 1);
-      } }>
-          Back
-      </button>
-      
-      <button
-      disabled={isLastQuestion || chosenAnswers[currentQuestionIndex]  == null}
-      onClick={() => {
-        setCurrentQuestionIndex(currentQuestionIndex + 1);
-      }}
-      >
-        Next
-      </button>
-
-
-</>
- 
+    </>
   );
 }
